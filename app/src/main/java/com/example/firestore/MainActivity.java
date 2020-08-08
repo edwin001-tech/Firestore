@@ -14,12 +14,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private DocumentReference journalRef = db.collection("Journal")
             .document("First Thoughts");
+    private CollectionReference collectionReference = db.collection("Journal");
 
     //Keys
     public static final String KEY_TITLE = "title";
@@ -69,73 +73,77 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                journalRef.get()
-                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                            @Override
-                            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                               if (documentSnapshot.exists()){
-//                                   String title = documentSnapshot.getString(KEY_TITLE);
-//                                   String thought = documentSnapshot.getString(KEY_THOUGHT);
 
-                                   Journal journal = documentSnapshot.toObject(Journal.class);
-
-                                   recTitle.setText(journal.getTitle());
-                                   recThought.setText(journal.getThought());
-
-
-                               }
-                                else {
-                                    Toast.makeText(MainActivity.this,
-                                             "no data exists",
-                                            Toast.LENGTH_LONG)
-                                            .show();
-
-                               }
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: " + e.toString());
-
-                            }
-                        });
+                getThoughts();
+//                journalRef.get()
+//                        .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                            @Override
+//                            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                               if (documentSnapshot.exists()){
+////                                   String title = documentSnapshot.getString(KEY_TITLE);
+////                                   String thought = documentSnapshot.getString(KEY_THOUGHT);
+//
+//                                   Journal journal = documentSnapshot.toObject(Journal.class);
+//
+//                                   recTitle.setText(journal.getTitle());
+//                                   recThought.setText(journal.getThought());
+//
+//
+//                               }
+//                                else {
+//                                    Toast.makeText(MainActivity.this,
+//                                             "no data exists",
+//                                            Toast.LENGTH_LONG)
+//                                            .show();
+//
+//                               }
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.d(TAG, "onFailure: " + e.toString());
+//
+//                            }
+//                        });
 
             }
         });
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = enterTitle.getText().toString().trim();
-                String thought = enterThought.getText().toString().trim();
 
-                Journal journal = new Journal();
-                journal.setTitle(title);
-                journal.setThought(thought);
+                addThought();
+//                String title = enterTitle.getText().toString().trim();
+//                String thought = enterThought.getText().toString().trim();
+//
+//                Journal journal = new Journal();
+//                journal.setTitle(title);
+//                journal.setThought(thought);
 
 //                Map<String, Object> data = new HashMap<>();
 //                data.put(KEY_TITLE, title);
 //                data.put(KEY_THOUGHT, thought);
 
 
-                journalRef .set(journal)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG)
-                                        .show();
-
-                            }
-
-
-
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "onFailure: " + e.toString());
-                            }
-                        });
+//                journalRef .set(journal)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void aVoid) {
+//                                Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG)
+//                                        .show();
+//
+//                            }
+//
+//
+//
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Log.d(TAG, "onFailure: " + e.toString());
+//                            }
+//                        });
 
             }
         });
@@ -156,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
 
                 if (value != null && value.exists()){
+
                     String title = value.getString(KEY_TITLE);
                     String thought = value.getString(KEY_THOUGHT);
 
@@ -176,6 +185,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    private void addThought() {
+        String title = enterTitle.getText().toString().trim();
+        String thought = enterThought.getText().toString().trim();
+
+        Journal journal = new Journal(title, thought);
+        //journal.setTitle(title);
+        // journal.setThought(thought);
+
+        collectionReference.add(journal);
+
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -189,6 +210,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 deleteAll();
                 break;
         }
+    }
+
+    private void getThoughts() {
+        collectionReference.get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                        String data = "";
+                        for (QueryDocumentSnapshot snapshots : queryDocumentSnapshots) {
+
+
+//                                    String title = documentSnapshot.getString(KEY_TITLE);
+//                                    String thought = documentSnapshot.getString(KEY_THOUGHT);
+
+
+//                             Log.d(TAG, "onSuccess: " + snapshots.getId());
+                            Journal journal = snapshots.toObject(Journal.class);
+
+                            data += "Title: " + journal.getTitle() + " \n"
+                                    + "Thought: " + journal.getThought() + "\n\n" ;
+
+
+
+                            //recTitle.setText(journal.getTitle());
+
+                        }
+                        recTitle.setText(data);
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                    }
+                });
     }
 
     private void deleteAll(){
