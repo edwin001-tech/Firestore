@@ -1,6 +1,7 @@
 package com.example.firestore;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -15,7 +16,9 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import org.w3c.dom.Text;
 
@@ -125,4 +128,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        journalRef.addSnapshotListener(this,new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value,
+                                @Nullable FirebaseFirestoreException error) {
+                if (error != null){
+                    Toast.makeText(MainActivity.this, "something went wrong",
+                            Toast.LENGTH_LONG)
+                            .show();
+
+                }
+
+                if (value != null && value.exists()){
+                    String title = value.getString(KEY_TITLE);
+                    String thought = value.getString(KEY_THOUGHT);
+
+                    recTitle.setText(title);
+                    recThought.setText(thought);
+
+                }
+
+            }
+        });
+    }
+
+
 }
