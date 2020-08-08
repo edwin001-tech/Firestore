@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ import org.w3c.dom.Text;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
     private EditText enterTitle;
     private EditText enterThought;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView recTitle;
     private TextView recThought;
     private Button showButton;
+    private Button updateButton;
 
 
     //Connection to Firestore
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         showButton = findViewById(R.id.show_data);
         recTitle = findViewById(R.id.rec_title);
         recThought = findViewById(R.id.rec_thoughts);
+        updateButton = findViewById(R.id.update_data);
+
+        updateButton.setOnClickListener(this);
 
 
         //Retrieve data from our collection
@@ -157,4 +162,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.update_data:
+                //call update
+                updateMyData();
+                break;
+        }
+    }
+
+    private void updateMyData() {
+        String title = enterTitle.getText().toString().trim();
+        String thought = enterThought.getText().toString().trim();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put(KEY_TITLE, title);
+        data.put(KEY_THOUGHT, thought);
+
+        journalRef.update(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(MainActivity.this, "Updated!",
+                        Toast.LENGTH_LONG)
+                        .show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
 }

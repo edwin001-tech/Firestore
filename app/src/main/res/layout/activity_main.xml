@@ -33,6 +33,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:id="@+id/update_data"
+        android:text="@string/update_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:id="@+id/rec_title"
         android:textSize="28sp"
@@ -47,11 +53,7 @@
 
 
 
-<!--    <Button-->
-<!--        android:id="@+id/update_data"-->
-<!--        android:text="@string/update_data"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content" />-->
+
 
 <!--    <Button-->
 <!--        android:id="@+id/delete_thought"-->
