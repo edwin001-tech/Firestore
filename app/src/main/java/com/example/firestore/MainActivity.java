@@ -74,11 +74,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             @Override
                             public void onSuccess(DocumentSnapshot documentSnapshot) {
                                if (documentSnapshot.exists()){
-                                   String title = documentSnapshot.getString(KEY_TITLE);
-                                   String thought = documentSnapshot.getString(KEY_THOUGHT);
+//                                   String title = documentSnapshot.getString(KEY_TITLE);
+//                                   String thought = documentSnapshot.getString(KEY_THOUGHT);
 
-                                   recTitle.setText(title);
-                                   recThought.setText(thought);
+                                   Journal journal = documentSnapshot.toObject(Journal.class);
+
+                                   recTitle.setText(journal.getTitle());
+                                   recThought.setText(journal.getThought());
 
 
                                }
@@ -107,12 +109,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String title = enterTitle.getText().toString().trim();
                 String thought = enterThought.getText().toString().trim();
 
-                Map<String, Object> data = new HashMap<>();
-                data.put(KEY_TITLE, title);
-                data.put(KEY_THOUGHT, thought);
+                Journal journal = new Journal();
+                journal.setTitle(title);
+                journal.setThought(thought);
+
+//                Map<String, Object> data = new HashMap<>();
+//                data.put(KEY_TITLE, title);
+//                data.put(KEY_THOUGHT, thought);
 
 
-                journalRef .set(data)
+                journalRef .set(journal)
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -155,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     recTitle.setText(title);
                     recThought.setText(thought);
+
+                    Journal journal = value.toObject(Journal.class);
+
+                    recTitle.setText(journal.getTitle());
+                    recThought.setText(journal.getThought());
 
                 }else {
                     recTitle.setText("");
