@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         saveButton = findViewById(R.id.save_button);
         showButton = findViewById(R.id.show_data);
         recTitle = findViewById(R.id.rec_title);
-        recThought = findViewById(R.id.rec_thoughts);
         updateButton = findViewById(R.id.update_data);
         deleteAll = findViewById(R.id.delete_all);
 
@@ -152,37 +151,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         super.onStart();
-        journalRef.addSnapshotListener(this,new EventListener<DocumentSnapshot>() {
+
+        collectionReference.addSnapshotListener(this, new EventListener<QuerySnapshot>() {
             @Override
-            public void onEvent(@Nullable DocumentSnapshot value,
-                                @Nullable FirebaseFirestoreException error) {
-                if (error != null){
-                    Toast.makeText(MainActivity.this, "something went wrong",
-                            Toast.LENGTH_LONG)
-                            .show();
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots,
+                                @Nullable FirebaseFirestoreException e) {
 
+                if (e != null) {
+                    Log.d(TAG, "onEvent: " + e.toString());
                 }
 
-                if (value != null && value.exists()){
+                String data = "";
+                if (queryDocumentSnapshots != null) {
+                    for (QueryDocumentSnapshot snapshots : queryDocumentSnapshots) {
 
-                    String title = value.getString(KEY_TITLE);
-                    String thought = value.getString(KEY_THOUGHT);
 
-                    recTitle.setText(title);
-                    recThought.setText(thought);
+                        //                                    String title = documentSnapshot.getString(KEY_TITLE);
+                        //                                    String thought = documentSnapshot.getString(KEY_THOUGHT);
 
-                    Journal journal = value.toObject(Journal.class);
 
-                    recTitle.setText(journal.getTitle());
-                    recThought.setText(journal.getThought());
+                        //                             Log.d(TAG, "onSuccess: " + snapshots.getId());
+                        Journal journal = snapshots.toObject(Journal.class);
 
-                }else {
-                    recTitle.setText("");
-                    recThought.setText("");
+                        data += "Title: " + journal.getTitle() + " \n"
+                                + "Thought: " + journal.getThought() + "\n\n" ;
+
+
+
+                        //recTitle.setText(journal.getTitle());
+
+                    }
                 }
+                recTitle.setText(data);
+
+
+
+
 
             }
         });
+//        journalRef.addSnapshotListener(this,new EventListener<DocumentSnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable DocumentSnapshot value,
+//                                @Nullable FirebaseFirestoreException error) {
+//                if (error != null){
+//                    Toast.makeText(MainActivity.this, "something went wrong",
+//                            Toast.LENGTH_LONG)
+//                            .show();
+//
+//                }
+//
+//                if (value != null && value.exists()){
+//
+//                    String title = value.getString(KEY_TITLE);
+//                    String thought = value.getString(KEY_THOUGHT);
+//
+//                    recTitle.setText(title);
+//                    recThought.setText(thought);
+//
+//                    Journal journal = value.toObject(Journal.class);
+//
+//                    recTitle.setText(journal.getTitle());
+//                    recThought.setText(journal.getThought());
+//
+//                }else {
+//                    recTitle.setText("");
+//                    recThought.setText("");
+//                }
+//
+//            }
+//        });
     }
 
     private void addThought() {
