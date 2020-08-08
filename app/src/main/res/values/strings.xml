@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Firestore</string>
+    <string name="enter_title">title</string>
+    <string name="enter_thoughts">thoughts</string>
+    <string name="save">save</string>
+    <string name="show_datatext">datatext</string>
+    <string name="update_data">update data</string>
+    <string name="delete_thought">delete thought</string>
 </resources>
