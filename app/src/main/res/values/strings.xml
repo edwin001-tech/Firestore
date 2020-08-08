@@ -5,5 +5,5 @@
     <string name="save">save</string>
     <string name="show_datatext">Show Data</string>
     <string name="update_data">update data</string>
-    <string name="delete_thought">delete thought</string>
+    <string name="delete_thought">delete all</string>
 </resources>

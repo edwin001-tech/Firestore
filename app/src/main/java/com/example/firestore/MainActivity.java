@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +17,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView recThought;
     private Button showButton;
     private Button updateButton;
+    private Button deleteAll;
 
 
     //Connection to Firestore
@@ -60,8 +59,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recTitle = findViewById(R.id.rec_title);
         recThought = findViewById(R.id.rec_thoughts);
         updateButton = findViewById(R.id.update_data);
+        deleteAll = findViewById(R.id.delete_all);
 
         updateButton.setOnClickListener(this);
+        deleteAll.setOnClickListener(this);
 
 
         //Retrieve data from our collection
@@ -155,6 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     recTitle.setText(title);
                     recThought.setText(thought);
 
+                }else {
+                    recTitle.setText("");
+                    recThought.setText("");
                 }
 
             }
@@ -169,7 +173,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //call update
                 updateMyData();
                 break;
+            case R.id.delete_all:
+                //call delete
+                deleteAll();
+                break;
         }
+    }
+
+    private void deleteAll(){
+        journalRef.delete();
+    }
+
+    private void deleteMyThought() {
+        journalRef.update(KEY_THOUGHT, FieldValue.delete());
+
     }
 
     private void updateMyData() {
