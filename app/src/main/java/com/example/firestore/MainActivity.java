@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 String data = "";
                 if (queryDocumentSnapshots != null) {
+                    //advanced for loop
                     for (QueryDocumentSnapshot snapshots : queryDocumentSnapshots) {
 
 
